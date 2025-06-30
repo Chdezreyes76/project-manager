@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Detalle de Tarea{% endblock %}
+{% block content %}
+<div class="kanban-viewport py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-7 col-xl-6">
+      <div class="card border-0 shadow-lg rounded-4 mb-4">
+        <div class="card-header bg-light border-bottom-0 rounded-top-4 py-4 px-4 d-flex flex-column gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="icon-circle bg-primary-subtle me-2"><i class="bi bi-list-check"></i></span>
+            <h3 class="mb-0 fw-bold modern-title-text">Detalle de Tarea</h3>
+          </div>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3"><span class="fw-semibold">Título:</span> {{ task.task_name }}</div>
+          <div class="mb-3"><span class="fw-semibold">Descripción:</span> {{ task.task_description }}</div>
+          <div class="mb-3"><span class="fw-semibold">Estado:</span> {{ task.task_status }}</div>
+          <div class="mb-3"><span class="fw-semibold">Prioridad:</span> {{ task.task_priority }}</div>
+          <div class="mb-3"><span class="fw-semibold">Asignado a:</span> {{ task.task_assigned_to }}</div>
+          <div class="mb-3"><span class="fw-semibold">Tiempo estimado (h):</span> {{ task.task_estimated_time }}</div>
+          <div class="mb-3"><span class="fw-semibold">Tiempo real (h):</span> {{ task.task_actual_time }}</div>
+          <div class="mb-3"><span class="fw-semibold">Creada:</span> {{ task.task_created_at }}</div>
+          <div class="mb-3"><span class="fw-semibold">Actualizada:</span> {{ task.task_updated_at }}</div>
+          <div class="mb-3"><span class="fw-semibold">User Story asociada:</span> {{ task.task_userstory_id }}</div>
+          {% if task.task_acceptance_criteria and task.task_acceptance_criteria|length > 0 %}
+            <div class="mb-3">
+              <span class="fw-semibold">Criterios de aceptación:</span>
+              <ul class="mb-0 ms-3">
+                {% for criterio in task.task_acceptance_criteria %}
+                  <li class="small">{{ criterio }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+          <a href="/userstories/{{ task.task_userstory_id }}" class="btn btn-outline-secondary mt-3"><i class="bi bi-arrow-left-circle"></i> Volver a la User Story</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

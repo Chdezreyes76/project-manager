@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Crear Tarea{% endblock %}
+{% block content %}
+<div class="kanban-viewport py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-7 col-xl-6">
+      <div class="card border-0 shadow-lg rounded-4 mb-4">
+        <div class="card-header bg-light border-bottom-0 rounded-top-4 py-4 px-4 d-flex flex-column gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="icon-circle bg-primary-subtle me-2"><i class="bi bi-list-check"></i></span>
+            <h3 class="mb-0 fw-bold modern-title-text">Crear Tarea</h3>
+          </div>
+        </div>
+        <div class="card-body p-4">
+          <form method="post">
+            <input type="hidden" name="task_userstory_id" value="{{ userstory_id }}">
+            <div class="mb-3">
+              <label for="task_name" class="form-label fw-semibold">Título de la tarea</label>
+              <input type="text" class="form-control form-control-lg" id="task_name" name="task_name" required value="{{ request.query_params.get('name', '') }}">
+            </div>
+            <div class="mb-3">
+              <label for="task_description" class="form-label fw-semibold">Descripción</label>
+              <textarea class="form-control form-control-lg" id="task_description" name="task_description" required style="resize:none; min-height:90px; max-height:600px; overflow:hidden;" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';">{{ descripcion_ia|replace(name, '')|trim if descripcion_ia else descripcion_ia or '' }}</textarea>
+              <script>
+                // Ajuste automático de altura al cargar la página
+                window.addEventListener('DOMContentLoaded', function() {
+                  var ta = document.getElementById('task_description');
+                  if (ta) {
+                    ta.style.height = 'auto';
+                    ta.style.height = ta.scrollHeight + 'px';
+                  }
+                });
+              </script>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Criterios de aceptación</label>
+              <div id="criterios-lista">
+                {% if criterios_ia %}
+                  {% for criterio in criterios_ia %}
+                    <div class="form-check" style="margin-left: 1rem;">
+                      <input class="form-check-input" type="checkbox" name="task_acceptance_criteria" id="criterio_{{ loop.index }}" value="{{ criterio }}" checked>
+                      <label class="form-check-label" for="criterio_{{ loop.index }}">{{ criterio }}</label>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="text-muted">No hay criterios sugeridos aún.</div>
+                {% endif %}
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="task_priority" class="form-label fw-semibold">Prioridad</label>
+              <select class="form-select form-select-lg" id="task_priority" name="task_priority" required>
+                <option value="Alta">Alta</option>
+                <option value="Media">Media</option>
+                <option value="Baja">Baja</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="task_assigned_to" class="form-label fw-semibold">Asignado a</label>
+              <input type="text" class="form-control form-control-lg" id="task_assigned_to" name="task_assigned_to" required>
+            </div>
+            <div class="mb-3">
+              <label for="task_estimated_time" class="form-label fw-semibold">Tiempo estimado (horas)</label>
+              <input type="number" class="form-control form-control-lg" id="task_estimated_time" name="task_estimated_time" min="1" required>
+            </div>
+            <div class="d-flex gap-2 mt-4">
+              <button type="submit" class="modern-header-btn2 d-inline-flex align-items-center gap-2">
+                <i class="bi bi-plus-circle"></i> Crear Tarea
+              </button>
+              <a href="#" onclick="window.history.length > 1 ? window.history.back() : window.location.href='/'" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
+                <i class="bi bi-x-circle"></i> Cancelar
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

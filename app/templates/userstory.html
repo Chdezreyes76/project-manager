@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block title %}Detalle de User Story{% endblock %}
+{% block content %}
+<div class="kanban-viewport py-4">
+  {% set estados = {
+    'Pendiente':    ('bi-hourglass-split',   '#2563eb'),
+    'En Progreso':  ('bi-arrow-repeat',      '#2563eb'),
+    'Finalizada':   ('bi-check-circle-fill', '#2563eb')
+  } %}
+  {% set icono = estados.get(userstory.userstory_status, ('bi-kanban', '#2563eb'))[0] %}
+  {% set color = estados.get(userstory.userstory_status, ('bi-kanban', '#2563eb'))[1] %}
+  <!-- Cabecera -->
+  <div class="project-main-header bg-light border-bottom-0 rounded-4 py-4 px-5 mb-4 d-flex align-items-center gap-3 justify-content-between">
+    <div class="d-flex align-items-center gap-3">
+      <span class="icon-circle" style="background: rgba(37,99,235,0.10); color: {{ color }}" aria-hidden="true">
+        <i class="bi {{ icono }}" aria-hidden="true"></i>
+      </span>
+      <div>
+        <h2 class="mb-1 fw-bold modern-title-text" style="letter-spacing:-1px;">{{ userstory.userstory_name or 'Sin título' }}</h2>
+        <div class="mt-1 small text-muted"><span class="fw-semibold">Estado:</span> {{ userstory.userstory_status|capitalize if userstory.userstory_status else 'N/A' }}</div>
+      </div>
+    </div>
+    <a href="/proyects/{{ userstory.userstory_project_id }}" class="modern-header-btn2 d-inline-flex align-items-center gap-2 ms-2" style="font-size:1.08em;">
+      <i class="bi bi-arrow-left-circle-fill"></i> Volver al Proyecto
+    </a>
+  </div>
+  <div class="row g-4 px-lg-5">
+    <!-- Panel Izquierdo: Detalles de la User Story -->
+    <div class="col-12 col-lg-7">
+      <div class="card border-0 shadow-lg rounded-4 mb-4 h-100">
+        <div class="card-header bg-light border-bottom-0 rounded-top-4 py-4 px-4">
+          <h5 class="fw-semibold mb-2">Detalles de la User Story</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3"><span class="fw-semibold">Descripción:</span> {{ userstory.userstory_description or 'Sin descripción' }}</div>
+          <div class="mb-3"><span class="fw-semibold">Rol:</span> {{ userstory.userstory_role or 'N/A' }}</div>
+          <div class="mb-3"><span class="fw-semibold">Objetivo:</span> {{ userstory.userstory_goal or 'N/A' }}</div>
+          <div class="mb-3"><span class="fw-semibold">Razón:</span> {{ userstory.userstory_reason or 'N/A' }}</div>
+          <div class="mb-3"><span class="fw-semibold">Prioridad:</span> {{ userstory.userstory_priority or 'N/A' }}</div>
+          <div class="mb-3"><span class="fw-semibold">Puntos estimados:</span> {{ userstory.userstory_estimated_points or 'N/A' }}</div>
+          <div class="mb-3"><span class="fw-semibold">Tiempo estimado (h):</span> {{ userstory.userstory_estimated_time or 'N/A' }}</div>
+          <div class="mb-3"><span class="fw-semibold">Tiempo real (h):</span> {{ userstory.userstory_actual_time or 'N/A' }}</div>
+          <div class="mb-3"><span class="fw-semibold">Creada:</span> {{ userstory.userstory_created_at or 'N/A' }}</div>
+          <div class="mb-3"><span class="fw-semibold">Actualizada:</span> {{ userstory.userstory_updated_at or 'N/A' }}</div>
+        </div>
+      </div>
+    </div>
+    <!-- Panel Derecho: Tareas -->
+    <div class="col-12 col-lg-5">
+      <div class="card border-0 shadow-lg rounded-4 mb-4 h-100">
+        <div class="card-header bg-light border-bottom-0 rounded-top-4 py-4 px-4 d-flex align-items-center gap-2">
+          <i class="bi bi-list-check text-primary" style="font-size:1.3em;"></i>
+          <h5 class="mb-0 fw-bold text-primary" style="font-size:1.08em;">Tareas</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-2"><span class="fw-semibold text-primary">Tareas creadas</span></div>
+          {% if tasks and tasks|length > 0 %}
+            <ul class="list-group list-group-flush mb-3">
+              {% for task in tasks %}
+                <li class="list-group-item d-flex flex-column gap-1 mb-2 rounded-3 shadow-sm border-0 bg-light">
+                  <div class="fw-semibold">{{ task.task_name }}</div>
+                  <div class="small text-muted">{{ task.task_description }}</div>
+                  <div class="d-flex gap-2 mt-2 align-items-center">
+                    <span class="badge bg-primary">{{ task.task_priority }}</span>
+                    <span class="badge bg-secondary">Asignado a: {{ task.task_assigned_to }}</span>
+                    <span class="badge bg-info">Estimado: {{ task.task_estimated_time }}h</span>
+                    <a href="/tasks/{{ task.task_id }}" class="btn btn-outline-primary btn-sm ms-auto"><i class="bi bi-eye"></i> Ver</a>
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="text-muted small">No hay tareas creadas aún para esta historia de usuario.</div>
+          {% endif %}
+          <div class="mb-2 mt-4"><span class="fw-semibold text-primary">Tareas propuestas</span></div>
+          {% set tareas = userstory.userstory_proposed_tasks if userstory.userstory_proposed_tasks is defined and userstory.userstory_proposed_tasks else [] %}
+          {% if tareas|length > 0 %}
+            <ul class="list-group list-group-flush mb-3">
+              {% for tarea in tareas %}
+                <li class="list-group-item d-flex flex-row align-items-center justify-content-between mb-2 rounded-3 shadow-sm border-0 bg-light">
+                  <div class="fw-semibold">{{ tarea }}</div>
+                  <a href="/tasks/create/{{ userstory.userstory_id }}?name={{ tarea|urlencode }}" class="btn btn-outline-success btn-sm d-flex align-items-center gap-1" title="Crear tarea real">
+                    <i class="bi bi-plus-circle"></i> Crear
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="text-center text-muted small py-3">No hay tareas sugeridas para esta historia de usuario.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+.project-main-header {
+  width: 100vw;
+  margin-left: calc(-1 * (100vw - 100%)/2);
+  margin-right: calc(-1 * (100vw - 100%)/2);
+  background: #f8fafc;
+  border-bottom: 1.5px solid #e5e7eb;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 2.2rem;
+}
+.icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  background: #e0e7ff;
+  color: #2563eb;
+}
+.modern-title-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: 0.5px;
+}
+.modern-header-btn2 {
+  font-size: 1.05rem;
+  padding: 0.55rem 1.2rem;
+  border-radius: 0.7rem;
+  font-weight: 500;
+  background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+  color: #fff !important;
+  border: none;
+  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.07);
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  transition: background 0.18s, box-shadow 0.18s;
+}
+.modern-header-btn2:hover, .modern-header-btn2:focus {
+  background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+  color: #fff !important;
+  box-shadow: 0 4px 16px 0 rgba(37,99,235,0.13);
+}
+.kanban-viewport {
+  width: 100vw;
+  margin-left: calc(-1 * (100vw - 100%)/2);
+  margin-right: calc(-1 * (100vw - 100%)/2);
+  background: #fff;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.card {
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.card:hover {
+  box-shadow: 0 0.7rem 2rem rgba(0,0,0,0.10), 0 0.2rem 0.6rem rgba(0,0,0,0.08);
+  transform: translateY(-2px) scale(1.01);
+}
+</style>
+{% endblock %}

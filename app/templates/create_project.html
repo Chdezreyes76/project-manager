@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Crear Proyecto{% endblock %}
+{% block content %}
+<div class="kanban-viewport py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-7 col-xl-6">
+      <div class="card border-0 shadow-lg rounded-4 mb-4">
+        <div class="card-header bg-light border-bottom-0 rounded-top-4 py-4 px-4 d-flex align-items-center gap-2">
+          <span class="icon-circle bg-primary-subtle me-2"><i class="bi bi-kanban"></i></span>
+          <h3 class="mb-0 fw-bold modern-title-text">Crear Proyecto</h3>
+        </div>
+        <div class="card-body p-4">
+          <form method="post">
+            <div class="mb-3">
+              <label for="proyect_name" class="form-label fw-semibold">Nombre del Proyecto</label>
+              <input type="text" class="form-control form-control-lg" id="proyect_name" name="proyect_name" required>
+            </div>
+            <div class="mb-3">
+              <label for="proyect_description" class="form-label fw-semibold">Descripción</label>
+              <textarea class="form-control form-control-lg" id="proyect_description" name="proyect_description" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="project_manager" class="form-label fw-semibold">Gerente del Proyecto</label>
+              <input type="text" class="form-control form-control-lg" id="project_manager" name="project_manager" required>
+            </div>
+            <div class="d-flex gap-2 mt-4">
+              <button type="submit" class="modern-header-btn2 d-inline-flex align-items-center gap-2">
+                <i class="bi bi-plus-circle"></i> Crear Proyecto
+              </button>
+              <a href="/" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
+                <i class="bi bi-x-circle"></i> Cancelar
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

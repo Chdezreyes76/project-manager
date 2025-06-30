@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% block title %}Detalle del Proyecto{% endblock %}
+{% block content %}
+<div class="kanban-viewport py-4">
+  {% set estados = {
+    'Activo':    ('bi-play-circle-fill',   '#2563eb'),
+    'En Desarrollo': ('bi-tools',              '#2563eb'),
+    'En Pruebas':    ('bi-bug-fill',           '#2563eb'),
+    'Finalizado':    ('bi-check-circle-fill',  '#2563eb'),
+    'Entregado':     ('bi-box-seam',           '#2563eb')
+  } %}
+  {% set icono = estados.get(proyect.proyect_status, ('bi-kanban', '#2563eb'))[0] %}
+  {% set color = estados.get(proyect.proyect_status, ('bi-kanban', '#2563eb'))[1] %}
+  <!-- Cabecera general -->
+   
+  <div class="project-main-header bg-light border-bottom-0 rounded-4 py-4 px-5 mb-4 d-flex align-items-center gap-3 justify-content-between">
+    <div class="d-flex align-items-center gap-3">
+      <span class="icon-circle" style="background: rgba(37,99,235,0.10); color: {{ color }}" aria-hidden="true">
+        <i class="bi {{ icono }}" aria-hidden="true"></i>
+      </span>
+      <div>
+        <h2 class="mb-1 fw-bold modern-title-text" style="letter-spacing:-1px;">{{ proyect.proyect_name or 'Sin nombre' }}</h2>
+        <div class="mt-1 small text-muted"><span class="fw-semibold">Estado:</span> {{ proyect.proyect_status|capitalize if proyect.proyect_status else 'N/A' }}</div>
+      </div>
+    </div>
+    <a href="/" class="modern-header-btn2 d-inline-flex align-items-center gap-2 ms-2" style="font-size:1.08em;">
+      <i class="bi bi-arrow-left-circle-fill"></i> Volver
+    </a>
+  </div>
+  <div class="row g-4 px-lg-5">
+    <!-- Panel Izquierdo: Detalle del Proyecto -->
+    <div class="col-12 col-lg-6">
+      <div class="card border-0 shadow-lg rounded-4 mb-4">
+        <div class="card-header bg-light border-bottom-0 rounded-top-4 py-4 px-4">
+          <h5 class="fw-semibold mb-2">Descripción</h5>
+          <p class="text-muted mb-0" style="font-size:1.08em;">{{ proyect.proyect_description or 'Sin descripción' }}</p>
+        </div>
+        <div class="card-body p-4">
+          <div class="row mb-4 g-3">
+            <div class="col-12">
+              <div class="bg-light rounded-3 p-3 h-100">
+                <div class="mb-2"><span class="fw-semibold">Gerente:</span> {{ proyect.project_manager or 'Sin gerente' }}</div>
+                <div class="mb-2"><span class="fw-semibold">Horas estimadas:</span> {{ proyect.proyect_estimated_hours or 'N/A' }}</div>
+                <div class="mb-2"><span class="fw-semibold">Inicio:</span> {{ proyect.proyect_start_date or 'N/A' }}</div>
+                <div><span class="fw-semibold">Fin:</span> {{ proyect.proyect_end_date or 'N/A' }}</div>
+              </div>
+            </div>
+          </div>
+          <hr class="my-4">
+          <h5 class="fw-semibold mb-3">Estructura de Archivos</h5>
+          <div class="bg-light rounded-3 p-3 mb-4" style="font-size: 0.97em;">
+            <pre class="mb-0" style="background: none; border: none; padding: 0;">{{ proyect.proyect_file_structure or '' }}</pre>
+          </div>
+          <h5 class="fw-semibold mb-3">Stack Tecnológico</h5>
+          {% if stack %}
+            <div class="mb-2"><span class="fw-semibold">Descripción:</span> {{ stack.descripcion }}</div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="bg-white border rounded-3 p-3 h-100">
+                  <strong class="d-block mb-2">Backend:</strong>
+                  <ul class="list-group list-group-flush mb-0">
+                    {% for dep in stack.backend %}
+                      <li class="list-group-item">{{ dep }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="bg-white border rounded-3 p-3 h-100">
+                  <strong class="d-block mb-2">Frontend:</strong>
+                  <ul class="list-group list-group-flush mb-0">
+                    {% for dep in stack.frontend %}
+                      <li class="list-group-item">{{ dep }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="alert alert-warning mt-3">No hay información de stack tecnológico.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <!-- Panel Derecho: Historias de Usuario -->
+    <div class="col-12 col-lg-6">
+      <div class="card border-0 shadow-lg rounded-4 mb-4 h-100">
+        <div class="card-header bg-light border-bottom-0 rounded-top-4 py-4 px-4 d-flex align-items-center gap-2 justify-content-between">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-list-task text-primary" style="font-size:1.3em;"></i>
+            <h5 class="mb-0 fw-bold text-primary" style="font-size:1.08em;">Historias de Usuario</h5>
+          </div>
+          <a href="/userstories/create/{{ proyect.proyect_id }}" class="btn btn-primary btn-sm d-flex align-items-center gap-1 shadow-sm">
+            <i class="bi bi-plus-circle"></i> Añadir
+          </a>
+        </div>
+        <div class="card-body p-4">
+          {% if user_stories and user_stories|length > 0 %}
+            <ul class="list-group list-group-flush">
+              {% for story in user_stories %}
+                <li class="list-group-item d-flex flex-column align-items-start mb-2 rounded-3 shadow-sm border-0 bg-light">
+                  <div class="fw-semibold mb-1">{{ story.userstory_name or 'Sin título' }}</div>
+                  <div class="text-muted small mb-1">{{ story.userstory_description or 'Sin descripción' }}</div>
+                  <div class="d-flex justify-content-between align-items-center w-100 mt-1">
+                    <div class="d-flex gap-2 align-items-center flex-wrap">
+                      <span class="badge bg-primary-subtle text-primary">Prioridad: {{ story.userstory_priority or 'N/A' }}</span>
+                      <span class="badge bg-secondary-subtle text-secondary">Estado: {{ story.userstory_status or 'N/A' }}</span>
+                      <span class="badge bg-info-subtle text-info">Propuestas: {{ story.userstory_proposed_tasks|length if story.userstory_proposed_tasks else 0 }}</span>
+                      <span class="badge bg-warning-subtle text-warning">Creadas: {{ story.tasks|length if story.tasks is defined and story.tasks else 0 }}</span>
+                      <span class="badge bg-success-subtle text-success">Finalizadas: {{ story.tasks|selectattr('task_status', 'equalto', 'Finalizada')|list|length if story.tasks is defined and story.tasks else 0 }}</span>
+                    </div>
+                    <a href="/userstories/{{ story.userstory_id }}" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 ms-2" title="Ver detalles">
+                      <i class="bi bi-eye"></i> Ver
+                    </a>
+                  </div>
+                  {# Aquí podrías mostrar tareas reales si las implementas en el futuro #}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="text-center text-muted small py-3">No hay historias de usuario registradas.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+.project-main-header {
+  width: 100vw;
+  margin-left: calc(-1 * (100vw - 100%)/2);
+  margin-right: calc(-1 * (100vw - 100%)/2);
+  background: #f8fafc;
+  border-bottom: 1.5px solid #e5e7eb;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 2.2rem;
+}
+.icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  background: #e0e7ff;
+  color: #2563eb;
+}
+.modern-title-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: 0.5px;
+}
+.modern-header-btn2 {
+  font-size: 1.05rem;
+  padding: 0.55rem 1.2rem;
+  border-radius: 0.7rem;
+  font-weight: 500;
+  background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+  color: #fff !important;
+  border: none;
+  box-shadow: 0 2px 8px 0 rgba(37,99,235,0.07);
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  transition: background 0.18s, box-shadow 0.18s;
+}
+.modern-header-btn2:hover, .modern-header-btn2:focus {
+  background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+  color: #fff !important;
+  box-shadow: 0 4px 16px 0 rgba(37,99,235,0.13);
+}
+.kanban-viewport {
+  width: 100vw;
+  margin-left: calc(-1 * (100vw - 100%)/2);
+  margin-right: calc(-1 * (100vw - 100%)/2);
+  background: #fff;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.card {
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.card:hover {
+  box-shadow: 0 0.7rem 2rem rgba(0,0,0,0.10), 0 0.2rem 0.6rem rgba(0,0,0,0.08);
+  transform: translateY(-2px) scale(1.01);
+}
+</style>
+{% endblock %}
