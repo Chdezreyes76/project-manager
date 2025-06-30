@@ -77,20 +77,20 @@ La aplicación estará disponible en http://localhost:8000
 - Al crear un proyecto, parte de la ficha se genera automáticamente usando IA.
 - El tablero Kanban muestra los proyectos por estado.
 
-![alt text](image-1.png)
+![Tablero Kanban](app/static/img/image-1.png)
 
 ### Gestión de User Stories
 - Cada proyecto puede tener múltiples user stories.
 - Las user stories pueden ser generadas y desglosadas por IA.
 - Puedes ver, editar y eliminar user stories desde la ficha del proyecto.
 
-![alt text](image-2.png)
+![Ficha de User Story](app/static/img/image-2.png)
 
 ### Gestión de Tareas
 - Las tareas se asocian a user stories y pueden ser generadas automáticamente por IA.
 - Puedes ver el detalle de cada tarea, editarla o eliminarla.
 
-![alt text](image-3.png)
+![Detalle de Tarea](app/static/img/image-3.png)
 
 ### Integración con OpenAI
 - La integración con OpenAI permite automatizar varias tareas clave del sistema, delegando en la IA la generación de información estructurada y relevante en distintos puntos del flujo de trabajo:
